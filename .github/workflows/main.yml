@@ -41,5 +41,4 @@ jobs:
     - name: Upload APK to GitHub Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: app-debug
-        path: bin/
+        namname: Build and Install Dependencies
