@@ -1,4 +1,4 @@
-name: Build and Install Dependencies
+name: Build Android APK
 
 on:
   push:
@@ -10,25 +10,37 @@ on:
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up repository and update
-      run: |
-        sudo add-apt-repository universe
-        sudo apt update
+      # Step 2: Set up JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17' # Adjust version as required
 
-    - name: Install dependencies
-      run: |
-        sudo apt install -y libffi-dev libssl-dev
-        # Install libncurses6 as libncurses5 is not available
-        sudo apt install -y libncurses6
+      # Step 3: Cache Gradle dependencies
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-    - name: Verify installation
-      run: |
-        dpkg -l | grep libffi-dev
-        dpkg -l | grep libssl-dev
-        dpkg -l | grep libncurses6
+      # Step 4: Build APK
+      - name: Build with Gradle
+        run: ./gradlew assembleRelease
+
+      # Step 5: Upload APK as artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/*.apk
