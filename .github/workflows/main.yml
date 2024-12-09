@@ -42,7 +42,7 @@ jobs:
     - name: Install Python Dependencies
       run: |
         source venv/bin/activate
-        pip install cython wheel buildozer virtualenv
+        pip install cython wheel distutils buildozer virtualenv
 
     # Initialize Buildozer
     - name: Initialize Buildozer
