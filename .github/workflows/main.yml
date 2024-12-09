@@ -49,6 +49,11 @@ jobs:
       run: |
         source venv/bin/activate
         
+    - name: Accept Android SDK licenses 
+      run: yes | sdkmanager --licenses - name
+    - name: Install Android SDK and Build-Tools 
+      run : |
+            yes | sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
       
 
     # Build the Android debug APK
