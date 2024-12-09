@@ -30,19 +30,6 @@ jobs:
         sudo apt-get install -y zlib1g-dev build-essential default-jre default-jdk unzip zip autoconf libtool \
                                 libffi-dev libssl-dev pkg-config  libncurses5-dev libncursesw5-dev cmake
 
-    # Install Android SDK tools
-    - name: Install Android SDK tools
-      run: |
-        sudo apt-get install -y wget unzip
-        wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip -O cmdline-tools.zip
-        mkdir -p android-sdk/cmdline-tools
-        unzip cmdline-tools.zip -d android-sdk/cmdline-tools
-        mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
-        export ANDROID_SDK_ROOT=$HOME/android-sdk
-        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin:$PATH
-        yes | $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin/sdkmanager --licenses
-        yes | $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
-
     # Set up a Python virtual environment
     - name: Set up Virtual Environment
       run: |
@@ -60,6 +47,7 @@ jobs:
     - name: Initialize Buildozer
       run: |
         source venv/bin/activate
+        buildozer init
       
     # Build the Android debug APK
     - name: Build Android APK
