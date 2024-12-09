@@ -1,37 +1,20 @@
-name: Build Android APK
-
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - name: Build APK
+        uses: digreatbrian/buildozer-action@v2
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          python-version: 3.8
+          buildozer-cmd: buildozer -v android debug
 
-      - name: Make gradlew executable
-        run: chmod +x ./android-app/gradlew
-        working-directory: ./android-app
-
-      - name: Build with Gradle
-        run: ./android-app/gradlew assembleRelease
-        working-directory: ./android-app
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: ./android-app/app/build/outputs/apk/release/*.apk
+          name: package
+          path: ./bin/*.apk
