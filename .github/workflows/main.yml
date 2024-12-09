@@ -1,24 +1,63 @@
+name: Android Build Workflow
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install libtinfo5
-        run: |
-           sudo apt-get install -y ncurses
-           
-      - name: Build APK
-        uses: digreatbrian/buildozer-action@v2
-        with:
-          python-version: 3.8
-          buildozer-cmd: buildozer -v android debug
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: ./bin/*.apk
+    steps:
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+
+    # Install system dependencies
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zlib1g-dev build-essential default-jre default-jdk unzip zip autoconf libtool \
+                                libffi-dev libssl-dev pkg-config libncurses5-dev libncursesw5-dev libtinfo5 cmake
+
+    # Set up a Python virtual environment
+    - name: Set up Virtual Environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+
+    # Install Python dependencies
+    - name: Install Python Dependencies
+      run: |
+        source venv/bin/activate
+        pip install cython wheel buildozer virtualenv
+
+    # Initialize Buildozer
+    - name: Initialize Buildozer
+      run: |
+        source venv/bin/activate
+        buildozer init
+
+    # Build the Android debug APK
+    - name: Build Android APK
+      run: |
+        source venv/bin/activate
+        buildozer android debug
+
+    # Upload the APK as an artifact
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-debug-apk
+        path: bin/
