@@ -40,12 +40,10 @@ jobs:
         echo "Directory structure after unzip:"
         ls -R android-sdk
         mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
-        mkdir -p $HOME/android-sdk/cmdline-tools/latest
-        mv android-sdk/cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
-        echo "Directory structure after mv:"
-        ls -R $HOME/android-sdk/cmdline-tools/latest
-        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
+        export ANDROID_SDK_ROOT=$HOME/android-sdk
+        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/bin:$PATH
+        yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --licenses
+        yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
 
     # Set up a Python virtual environment
     - name: Set up Virtual Environment
@@ -60,20 +58,4 @@ jobs:
         source venv/bin/activate
         pip install cython wheel setuptools buildozer virtualenv
 
-    # Initialize Buildozer
-    - name: Initialize Buildozer
-      run: |
-        source venv/bin/activate
-      
-    # Build the Android debug APK
-    - name: Build Android APK
-      run: |
-        source venv/bin/activate
-        buildozer android debug
-
-    # Upload the APK as an artifact
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: android-debug-apk
-        path: bin/
+    # Initialize
