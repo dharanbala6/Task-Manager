@@ -29,16 +29,18 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y zlib1g-dev build-essential default-jre default-jdk unzip zip autoconf libtool \
                                 libffi-dev libssl-dev pkg-config  libncurses5-dev libncursesw5-dev cmake
+
     # Install Android SDK tools
     - name: Install Android SDK tools
       run: |
         sudo apt-get install -y wget unzip
         wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip -O cmdline-tools.zip
-        mkdir -p android-sdk/cmdline-tools/latest
-        unzip cmdline-tools.zip -d android-sdk/cmdline-tools/latest
+        mkdir -p android-sdk/cmdline-tools
+        unzip cmdline-tools.zip -d android-sdk/cmdline-tools
         mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
-        yes | android-sdk/cmdline-tools/latest/cmdline-tools/bin/sdkmanager --licenses
-        yes | android-sdk/cmdline-tools/latest/cmdline-tools/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
+        mv android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
 
     # Set up a Python virtual environment
     - name: Set up Virtual Environment
@@ -46,11 +48,13 @@ jobs:
         python -m venv venv
         source venv/bin/activate
         pip install --upgrade pip
+
     # Install Python dependencies
     - name: Install Python Dependencies
       run: |
         source venv/bin/activate
         pip install cython wheel setuptools buildozer virtualenv
+
     # Initialize Buildozer
     - name: Initialize Buildozer
       run: |
@@ -61,9 +65,11 @@ jobs:
       run: |
         source venv/bin/activate
         buildozer android debug
+
     # Upload the APK as an artifact
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
         name: android-debug-apk
         path: bin/
+
