@@ -29,7 +29,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y zlib1g-dev build-essential default-jre default-jdk unzip zip autoconf libtool \
-                                libffi-dev libssl-dev pkg-config libncurses5-dev libncursesw5-dev libncurses5-dev cmake
+                                libffi-dev libssl-dev pkg-config  libncurses5-dev libncursesw5-dev libncurses5-dev cmake
 
     # Set up a Python virtual environment
     - name: Set up Virtual Environment
@@ -48,6 +48,7 @@ jobs:
     - name: Initialize Buildozer
       run: |
         source venv/bin/activate
+        buildozer -v android sdk install
       
 
     # Build the Android debug APK
