@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install libtinfo5
         run: |
-           sudo apt-get install -y libtinfo5
+           sudo apt-get install -y ncurses
            
       - name: Build APK
         uses: digreatbrian/buildozer-action@v2
