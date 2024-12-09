@@ -34,12 +34,11 @@ jobs:
       run: |
         sudo apt-get install -y wget unzip
         wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip -O cmdline-tools.zip
-        unzip cmdline-tools.zip -d android-sdk
+        mkdir -p android-sdk/cmdline-tools/latest
+        unzip cmdline-tools.zip -d android-sdk/cmdline-tools/latest
         mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
-        mkdir -p android-sdk/cmdline-tools
-        mv android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
+        yes | android-sdk/cmdline-tools/latest/cmdline-tools/bin/sdkmanager --licenses
+        yes | android-sdk/cmdline-tools/latest/cmdline-tools/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools"
 
     # Set up a Python virtual environment
     - name: Set up Virtual Environment
@@ -68,4 +67,3 @@ jobs:
       with:
         name: android-debug-apk
         path: bin/
-
